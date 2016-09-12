@@ -1,0 +1,23 @@
+# basics, 201s, 200s
+create playlist
+create track in playlist
+list tracks from playlist
+follow someone
+like a track
+get the current user
+get the stream of tracks from followed people
+
+# missing:
+
+# 400's etc
+a track is unique
+a track is unique in the playlist
+a track must come from a set of providers
+a track must be reachable
+a track cannot be liked multiple times from the same person
+someone cannot follow the same people twice
+current user cannot be retrieved if not authenticated
+
+gets likes, follows
+deletes
+updates

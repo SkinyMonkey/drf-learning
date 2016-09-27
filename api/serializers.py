@@ -109,21 +109,22 @@ class TrackSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"non_field_errors": "TRACK_ALREADY_REGISTERED"})
     
     def validate(self, payload):
-        self.source_url = payload['source_url']
+        if payload.get('source_url'):
+            self.source_url = payload['source_url']
  
-        self.provider = self.valid_provider(self.source_url)
+            self.provider = self.valid_provider(self.source_url)
 
-        self.uuid = shortuuid.uuid(name=str(self.source_url))
+            self.uuid = shortuuid.uuid(name=str(self.source_url))
     
-        tracks = Track.objects.filter(url_checksum=self.uuid)
+            tracks = Track.objects.filter(url_checksum=self.uuid)
 
-        if tracks.count() == 0:
-            self.track = None
-        else:
-            self.track = tracks[0]
+            if tracks.count() == 0:
+                self.track = None
+            else:
+                self.track = tracks[0]
 
-#        self.unique_track_in_playlist(self.uuid, playlist_id)
-#        self.track_exists(source_url, self.provider)
+#            self.unique_track_in_playlist(self.uuid, playlist_id)
+#            self.track_exists(source_url, self.provider)
 
         return payload
 
@@ -138,6 +139,8 @@ class PlaylistSerializer(serializers.ModelSerializer):
     owner_id = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
 
     image_url = serializers.URLField(required=False)
+
+    # FIXME : editable =True
 
     class Meta:
         model = Playlist

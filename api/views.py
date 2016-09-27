@@ -1,13 +1,23 @@
 from django.contrib.auth.models import User, Group
 from api.models import Playlist, Track, Follow, Like, TrackPlaylist
 from rest_framework import viewsets, filters, generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from api.serializers import UserSerializer, GroupSerializer, PlaylistSerializer, TrackSerializer, FollowSerializer, LikeSerializer
 
-from django.contrib.auth.models import AnonymousUser
-from rest_framework.exceptions import NotAuthenticated
+# Swagger view
+# FIXME : move to separate file
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework import response, schemas
+
+# FIXME : move to separate file
+@api_view()
+@renderer_classes([SwaggerUIRenderer, OpenAPIRenderer])
+def schema_view(request):
+    generator = schemas.SchemaGenerator(title='Whyd API')
+    return response.Response(generator.get_schema(request=request))
 
 class MQViewSet(viewsets.ModelViewSet):
     def __init__(self, *args, **kwargs):
@@ -52,6 +62,8 @@ class MQViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, serializer):
         super(MQViewSet, self).perform_destroy(serializer)
         self.on_destroy(serializer)
+
+# FIXME : break to separate files
 
 # FIXME : what if user not logged?
 class PlaylistViewSet(MQViewSet):
@@ -141,10 +153,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminUser,)
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated,))
 def current_user(request):
-    if isinstance(request.user, AnonymousUser):
-        raise NotAuthenticated(detail='NOT_AUTHENTICATED')
-
     serializer = UserSerializer(request.user, context={'request': request})
     return Response(serializer.data)
 
@@ -166,6 +176,7 @@ class StreamList(generics.ListAPIView):
       def get_queryset(self):
           user = self.request.user
     
+          # FIXME : optimize this request, avoid the map/in
           followed = map(lambda follow: follow.followed
                         ,Follow.objects.filter(owner_id=user))
             
@@ -195,6 +206,7 @@ class ListPlaylistTracksView(generics.ListCreateAPIView):
     def get_queryset(self):
         playlist_id = self.kwargs.get('playlist_id')
 
+        # FIXME : optimize this request, avoid the map/in
         playlist_tracks = map(lambda playlist_track: playlist_track.track_id.id
                              ,TrackPlaylist.objects.filter(playlist_id=playlist_id));
 

@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from rest_framework import generics
 from django.utils import timezone
 
-
 class DateMixin(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
@@ -59,7 +58,7 @@ class TrackPlaylist(DateMixin):
     track_id = models.ForeignKey(Track, related_name="track")
     playlist_id = models.ForeignKey(Playlist, related_name="playlist")
 
-# FIXME : use genericForeignKey to use on comments, playlist and others?
+# FIXME : use genericForeignKey to use on playlist too?
 class Tag(DateMixin):
     owner_id = models.ForeignKey(User)
     track_id = models.ForeignKey(Track)

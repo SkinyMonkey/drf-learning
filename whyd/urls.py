@@ -30,6 +30,7 @@ router.register(r'likes', views.LikeViewSet, 'likes')
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r'^', include(router.urls)),
+    url(r'^documentation/', views.schema_view),
 
     url(r'^me/', views.current_user),
     url(r'^stream/', views.StreamList.as_view()),

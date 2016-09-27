@@ -1,9 +1,15 @@
 Django==1.10.1
 PyJWT==1.4.2
+coreapi==2.0.0
 django-crispy-forms==1.6.0
 django-filter==0.14.0
+django-rest-swagger==2.0.5
 djangorestframework==3.4.6
 djangorestframework-jwt==1.8.0
+itypes==1.1.0
+openapi-codec==1.0.0
 requests==2.11.1
 shortuuid==0.4.3
+simplejson==3.8.2
+uritemplate==3.0.0
 wsgiref==0.1.2
